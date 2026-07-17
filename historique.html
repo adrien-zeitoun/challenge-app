@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Historique et Stats</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Historique des challenges</h1>
+  <a href="index.html">← Retour aux challenges en cours</a>
+
+  <div class="stats">
+    <p>Total terminés<span id="totalCompleted">0</span></p>
+    <p>Total refusés<span id="totalRefused">0</span></p>
+    <p>Taux de complétion<span id="tauxCompletion">0%</span></p>
+  </div>
+
+  <button id="resetBtn" class="dangerBtn">🗑️ Tout réinitialiser</button>
+
+  <ul id="historyList"></ul>
+
+  <script type="module">
+    import { db } from "./firebase-config.js";
+    import {
+      collection, query, where, onSnapshot, getDocs,
+      doc, updateDoc, deleteDoc
+    } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    const challengesRef = collection(db, "challenges");
+    const qCompleted = query(challengesRef, where("completed", "==", true));
+
+    onSnapshot(qCompleted, (snapshot) => {
+      const list = document.getElementById("historyList");
+      list.innerHTML = "";
+
+      if (snapshot.empty) {
+        list.innerHTML = "<p>Aucun challenge terminé ou refusé pour l'instant.</p>";
+        document.getElementById("totalCompleted").textContent = 0;
+        document.getElementById("totalRefused").textContent = 0;
+        return;
+      }
+
+      const docsArray = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      docsArray.sort((a, b) => {
+        const dateA = a.dateCompletion ? a.dateCompletion.toMillis() : 0;
+        const dateB = b.dateCompletion ? b.dateCompletion.toMillis() : 0;
+        return dateB - dateA;
+      });
+
+      let refusedCount = 0;
+
+      docsArray.forEach((data) => {
+        const li = document.createElement("li");
+
+        const dateStr = data.dateCompletion
+          ? data.dateCompletion.toDate().toLocaleDateString("fr-FR", {
+              day: "2-digit", month: "2-digit", year: "numeric"
+            })
+          : "date inconnue";
+
+        const cat = data.categorie || "Autre";
+        const catClass = cat.replace(/\s+/g, "");
+        const isRefused = data.refused === true;
+        if (isRefused) refusedCount++;
+
+        const statutBadge = isRefused
+          ? `<span class="badge badge-refuse">❌ Refusé</span>`
+          : `<span class="badge badge-termine">✅ Terminé</span>`;
+
+        li.innerHTML = `
+          <span class="badge badge-${catClass}">${cat}</span>
+          ${statutBadge}
+          <strong>${data.titre}</strong> — le ${dateStr}
+          <button class="undoBtn" data-id="${data.id}">↩️ Annuler</button>
+        `;
+        list.appendChild(li);
+      });
+
+      document.getElementById("totalCompleted").textContent = snapshot.size - refusedCount;
+      document.getElementById("totalRefused").textContent = refusedCount;
+
+      document.querySelectorAll(".undoBtn").forEach((btn) => {
+        btn.addEventListener("click", async (e) => {
+          const id = e.target.dataset.id;
+          try {
+            await updateDoc(doc(db, "challenges", id), {
+              completed: false,
+              refused: false,
+              dateCompletion: null
+            });
+          } catch (err) {
+            alert("Erreur : " + err.message);
+          }
+        });
+      });
+    });
+
+    getDocs(challengesRef).then((snapshot) => {
+      const total = snapshot.size;
+      const completedNotRefused = snapshot.docs.filter(
+        d => d.data().completed && !d.data().refused
+      ).length;
+      const taux = total > 0 ? ((completedNotRefused / total) * 100).toFixed(1) : 0;
+      document.getElementById("tauxCompletion").textContent = taux + "%";
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", async () => {
+      const confirmed = confirm("Voulez-vous vraiment supprimer TOUS les challenges ? Cette action est irréversible.");
+      if (!confirmed) return;
+
+      const snapshot = await getDocs(challengesRef);
+      const deletePromises = snapshot.docs.map((docSnap) =>
+        deleteDoc(doc(db, "challenges", docSnap.id))
+      );
+
+      try {
+        await Promise.all(deletePromises);
+        alert("Tous les challenges ont été supprimés.");
+      } catch (err) {
+        alert("Erreur lors de la suppression : " + err.message);
+      }
+    });
+  </script>
+</body>
+</html>

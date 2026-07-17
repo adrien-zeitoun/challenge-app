@@ -1,0 +1,347 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  min-height: 100vh;
+  color: #f1f1f1;
+  padding: 30px 20px;
+  max-width: 700px;
+  margin: 0 auto;
+  background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #1a1a2e);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 25px;
+  text-align: center;
+  background: linear-gradient(90deg, #ff6ec4, #7873f5, #4ade80);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+/* --- Formulaire (glass card) --- */
+#addForm {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+#titreInput {
+  flex: 1;
+  min-width: 150px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  font-size: 1rem;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+}
+
+#titreInput::placeholder {
+  color: rgba(255,255,255,0.5);
+}
+
+#titreInput:focus {
+  outline: none;
+  border-color: #ff6ec4;
+  box-shadow: 0 0 12px rgba(255, 110, 196, 0.5);
+}
+
+#addForm select, #filterSelect {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.2);
+  font-size: 0.9rem;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+}
+
+#addForm select option, #filterSelect option {
+  background: #24243e;
+  color: #fff;
+}
+
+#addForm button {
+  padding: 12px 22px;
+  background: linear-gradient(90deg, #ff6ec4, #7873f5);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+  box-shadow: 0 4px 15px rgba(120, 115, 245, 0.4);
+}
+
+#addForm button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 110, 196, 0.5);
+}
+
+.filterBar {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255,255,255,0.7);
+}
+
+/* --- Liste des challenges (glass cards) --- */
+#challengeList, #historyList {
+  list-style: none;
+}
+
+#challengeList li, #historyList li {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1rem;
+  flex-wrap: wrap;
+  color: #f1f1f1;
+  transition: transform 0.2s, box-shadow 0.2s;
+  justify-content: space-between;
+}
+
+#challengeList li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(120, 115, 245, 0.25);
+}
+
+#historyList li {
+  color: rgba(255,255,255,0.6);
+}
+
+#historyList li strong {
+  text-decoration: line-through;
+  color: rgba(255,255,255,0.75);
+}
+
+.titreChallenge {
+  color: #f1f1f1;
+}
+
+input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  accent-color: #4ade80;
+}
+
+/* --- Badges catégories (néon) --- */
+.badge {
+  font-size: 0.72rem;
+  padding: 4px 12px;
+  border-radius: 20px;
+  color: white;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.badge-Boxe { background-color: #ef4444; box-shadow: 0 0 10px #ef444488; }
+.badge-Cuisine { background-color: #f97316; box-shadow: 0 0 10px #f9731688; }
+.badge-Couloir { background-color: #64748b; box-shadow: 0 0 10px #64748b88; }
+.badge-Salledebain { background-color: #06b6d4; box-shadow: 0 0 10px #06b6d488; }
+.badge-Baignoire { background-color: #0ea5e9; box-shadow: 0 0 10px #0ea5e988; }
+.badge-Chambre { background-color: #a855f7; box-shadow: 0 0 10px #a855f788; }
+.badge-Salon { background-color: #3b82f6; box-shadow: 0 0 10px #3b82f688; }
+.badge-Salleamanger { background-color: #4ade80; box-shadow: 0 0 10px #4ade8088; }
+.badge-Partout { background-color: #eab308; box-shadow: 0 0 10px #eab30888; }
+.badge-Autre { background-color: #9ca3af; box-shadow: 0 0 10px #9ca3af88; }
+.badge-termine { background-color: #22c55e; box-shadow: 0 0 10px #22c55e88; }
+.badge-refuse { background-color: #ef4444; box-shadow: 0 0 10px #ef444488; }
+.badge-accepte { background-color: #22c55e; box-shadow: 0 0 10px #22c55e88; }
+
+/* --- Lien retour --- */
+a {
+  display: inline-block;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  color: #7873f5;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #ff6ec4;
+  text-decoration: underline;
+}
+
+/* --- Stats (glass card) --- */
+.stats {
+  display: flex;
+  justify-content: space-around;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.stats p {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+}
+
+.stats span {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #ff6ec4, #4ade80);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* --- Boutons Accepter / Refuser / Valider / Annuler / Reset --- */
+.acceptBtn, .refuseBtn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.acceptBtn {
+  background: linear-gradient(90deg, #4ade80, #22c55e);
+  color: white;
+}
+
+.acceptBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.5);
+}
+
+.refuseBtn {
+  background: linear-gradient(90deg, #f87171, #ef4444);
+  color: white;
+}
+
+.refuseBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.5);
+}
+
+.validerBtn {
+  margin-left: auto;
+  padding: 8px 16px;
+  background: linear-gradient(90deg, #4ade80, #16a34a);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s;
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);
+}
+
+.validerBtn:hover {
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 0 6px 18px rgba(74, 222, 128, 0.6);
+}
+
+.undoBtn {
+  margin-left: auto;
+  padding: 6px 14px;
+  background: linear-gradient(90deg, #f59e0b, #f97316);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.undoBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.5);
+}
+
+.dangerBtn {
+  display: block;
+  margin: 0 0 20px auto;
+  padding: 10px 20px;
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+}
+
+.dangerBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+}
+
+@media (max-width: 500px) {
+  #addForm {
+    flex-direction: column;
+  }
+  .stats {
+    flex-direction: column;
+  }
+}
+
+.deleteBtn {
+  padding: 8px 12px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.deleteBtn:hover {
+  background: #ef4444;
+  color: white;
+  transform: translateY(-1px);
+}
