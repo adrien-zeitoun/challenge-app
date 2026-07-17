@@ -4,11 +4,17 @@
   box-sizing: border-box;
 }
 
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   font-family: 'Segoe UI', Arial, sans-serif;
   min-height: 100vh;
   color: #f1f1f1;
-  padding: 30px 20px;
+  padding: 20px 16px;
+  width: 100%;
   max-width: 700px;
   margin: 0 auto;
   background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #1a1a2e);
@@ -23,8 +29,8 @@ body {
 }
 
 h1 {
-  font-size: 2rem;
-  margin-bottom: 25px;
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  margin-bottom: 20px;
   text-align: center;
   background: linear-gradient(90deg, #ff6ec4, #7873f5, #4ade80);
   background-clip: text;
@@ -37,9 +43,10 @@ h1 {
 /* --- Formulaire (glass card) --- */
 #addForm {
   display: flex;
+  flex-direction: column;
   gap: 10px;
   margin-bottom: 20px;
-  flex-wrap: wrap;
+  width: 100%;
   background: rgba(255, 255, 255, 0.07);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -50,8 +57,7 @@ h1 {
 }
 
 #titreInput {
-  flex: 1;
-  min-width: 150px;
+  width: 100%;
   padding: 12px 14px;
   border: 1px solid rgba(255,255,255,0.2);
   border-radius: 10px;
@@ -71,6 +77,7 @@ h1 {
 }
 
 #addForm select, #filterSelect {
+  width: 100%;
   padding: 10px;
   border-radius: 10px;
   border: 1px solid rgba(255,255,255,0.2);
@@ -85,6 +92,7 @@ h1 {
 }
 
 #addForm button {
+  width: 100%;
   padding: 12px 22px;
   background: linear-gradient(90deg, #ff6ec4, #7873f5);
   color: white;
@@ -105,14 +113,17 @@ h1 {
 .filterBar {
   margin-bottom: 20px;
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
   color: rgba(255,255,255,0.7);
+  width: 100%;
 }
 
 /* --- Liste des challenges (glass cards) --- */
 #challengeList, #historyList {
   list-style: none;
+  width: 100%;
 }
 
 #challengeList li, #historyList li {
@@ -125,13 +136,13 @@ h1 {
   border-radius: 14px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.25);
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
   font-size: 1rem;
-  flex-wrap: wrap;
+  width: 100%;
   color: #f1f1f1;
   transition: transform 0.2s, box-shadow 0.2s;
-  justify-content: space-between;
 }
 
 #challengeList li:hover {
@@ -150,6 +161,8 @@ h1 {
 
 .titreChallenge {
   color: #f1f1f1;
+  font-size: 1rem;
+  word-break: break-word;
 }
 
 input[type="checkbox"] {
@@ -186,12 +199,13 @@ input[type="checkbox"] {
 
 /* --- Lien retour --- */
 a {
-  display: inline-block;
+  display: block;
   margin-top: 15px;
   margin-bottom: 15px;
   color: #7873f5;
   text-decoration: none;
   font-weight: 600;
+  text-align: center;
   transition: color 0.2s;
 }
 
@@ -203,28 +217,29 @@ a:hover {
 /* --- Stats (glass card) --- */
 .stats {
   display: flex;
-  justify-content: space-around;
+  flex-direction: column;
+  gap: 10px;
   background: rgba(255, 255, 255, 0.07);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 16px;
-  padding: 20px;
+  padding: 18px;
   margin: 20px 0;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  flex-wrap: wrap;
-  gap: 12px;
+  width: 100%;
 }
 
 .stats p {
   font-size: 0.9rem;
   color: rgba(255,255,255,0.6);
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .stats span {
-  display: block;
-  font-size: 1.6rem;
+  font-size: 1.3rem;
   font-weight: 800;
   background: linear-gradient(90deg, #ff6ec4, #4ade80);
   background-clip: text;
@@ -232,15 +247,17 @@ a:hover {
   -webkit-text-fill-color: transparent;
 }
 
-/* --- Boutons Accepter / Refuser / Valider / Annuler / Reset --- */
-.acceptBtn, .refuseBtn {
-  padding: 8px 14px;
+/* --- Boutons Accepter / Refuser / Valider / Annuler / Reset / Supprimer --- */
+.acceptBtn, .refuseBtn, .validerBtn, .undoBtn, .deleteBtn, .dangerBtn {
+  width: 100%;
+  padding: 10px 14px;
   border: none;
   border-radius: 8px;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.2s;
+  text-align: center;
 }
 
 .acceptBtn {
@@ -264,35 +281,19 @@ a:hover {
 }
 
 .validerBtn {
-  margin-left: auto;
-  padding: 8px 16px;
   background: linear-gradient(90deg, #4ade80, #16a34a);
   color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.2s;
   box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);
 }
 
 .validerBtn:hover {
-  transform: translateY(-1px) scale(1.03);
+  transform: translateY(-1px) scale(1.02);
   box-shadow: 0 6px 18px rgba(74, 222, 128, 0.6);
 }
 
 .undoBtn {
-  margin-left: auto;
-  padding: 6px 14px;
   background: linear-gradient(90deg, #f59e0b, #f97316);
   color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s;
 }
 
 .undoBtn:hover {
@@ -300,19 +301,23 @@ a:hover {
   box-shadow: 0 4px 14px rgba(245, 158, 11, 0.5);
 }
 
+.deleteBtn {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.deleteBtn:hover {
+  background: #ef4444;
+  color: white;
+  transform: translateY(-1px);
+}
+
 .dangerBtn {
-  display: block;
-  margin: 0 0 20px auto;
-  padding: 10px 20px;
   background: linear-gradient(90deg, #ef4444, #dc2626);
   color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s;
   box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+  margin-bottom: 20px;
 }
 
 .dangerBtn:hover {
@@ -320,86 +325,76 @@ a:hover {
   box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
 }
 
-@media (max-width: 500px) {
+/* --- Desktop / tablette : à partir de 600px, on repasse en ligne --- */
+@media (min-width: 600px) {
   body {
-    padding: 16px 12px;
-  }
-
-  h1 {
-    font-size: 1.5rem;
+    padding: 30px 20px;
   }
 
   #addForm {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 
-  #addForm select, #titreInput, #addForm button {
-    width: 100%;
+  #titreInput {
+    flex: 1;
+    min-width: 150px;
+    width: auto;
+  }
+
+  #addForm select {
+    width: auto;
+  }
+
+  #addForm button {
+    width: auto;
   }
 
   .filterBar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  #filterSelect {
-    width: 100%;
-  }
-
-  #challengeList li, #historyList li {
-    flex-direction: column;
-    align-items: stretch;
-    text-align: left;
-  }
-
-  .titreChallenge {
-    font-size: 0.95rem;
-    order: -1;
-  }
-
-  .validerBtn, .undoBtn {
-    margin-left: 0;
-    width: 100%;
-  }
-
-  .acceptBtn, .refuseBtn, .deleteBtn {
-    width: 100%;
-  }
-
-  .stats {
-    flex-direction: column;
-  }
-
-  .stats p {
-    display: flex;
-    justify-content: space-between;
+    flex-direction: row;
     align-items: center;
   }
 
+  #filterSelect {
+    width: auto;
+  }
+
+  #challengeList li, #historyList li {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  a {
+    display: inline-block;
+    text-align: left;
+  }
+
+  .stats {
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  .stats p {
+    flex-direction: column;
+    text-align: center;
+  }
+
   .stats span {
-    font-size: 1.3rem;
+    display: block;
+  }
+
+  .acceptBtn, .refuseBtn, .validerBtn, .undoBtn, .deleteBtn {
+    width: auto;
+  }
+
+  .validerBtn, .undoBtn {
+    margin-left: auto;
   }
 
   .dangerBtn {
-    width: 100%;
-    margin: 0 0 20px 0;
+    width: auto;
+    display: block;
+    margin: 0 0 20px auto;
   }
-}
-
-.deleteBtn {
-  padding: 8px 12px;
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  border-radius: 8px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.deleteBtn:hover {
-  background: #ef4444;
-  color: white;
-  transform: translateY(-1px);
 }

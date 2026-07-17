@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mes Challenges</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -12,8 +12,7 @@
   <form id="addForm">
     <input type="text" id="titreInput" placeholder="Nouveau challenge" required>
     <select id="categorieInput">
-          <option value="Partout">N'importe où</option>
-
+      <option value="Partout">N'importe où</option>
       <option value="Boxe">Boxe</option>
       <option value="Cuisine">Cuisine</option>
       <option value="Couloir">Couloir</option>
@@ -30,8 +29,7 @@
     <label for="filterSelect">Filtrer :</label>
     <select id="filterSelect">
       <option value="Toutes">Toutes les catégories</option>
-        <option value="Partout">N'importe où</option>
-
+      <option value="Partout">N'importe où</option>
       <option value="Boxe">Boxe</option>
       <option value="Cuisine">Cuisine</option>
       <option value="Couloir">Couloir</option>
@@ -50,8 +48,8 @@
   <script type="module">
     import { db } from "./firebase-config.js";
     import {
-    collection, addDoc, query, where, onSnapshot,
-    doc, updateDoc, serverTimestamp, deleteDoc
+      collection, addDoc, query, where, onSnapshot,
+      doc, updateDoc, serverTimestamp, deleteDoc
     } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
     const challengesRef = collection(db, "challenges");
@@ -61,106 +59,53 @@
     let currentFilter = "Toutes";
     let unsubscribe = null;
 
-    function loadChallenges() {
-      if (unsubscribe) unsubscribe();
+    function renderChallenges(docsArray) {
+      list.innerHTML = "";
 
-      const q = query(challengesRef, where("completed", "==", false));
+      if (docsArray.length === 0) {
+        list.innerHTML = "<p>Aucun challenge dans cette catégorie.</p>";
+        return;
+      }
 
-      unsubscribe = onSnapshot(q, (snapshot) => {
-        list.innerHTML = "";
-        let docsArray = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-
-        if (currentFilter !== "Toutes") {
-          docsArray = docsArray.filter(d => d.categorie === currentFilter);
-        }
-
-        if (docsArray.length === 0) {
-          list.innerHTML = "<p>Aucun challenge dans cette catégorie.</p>";
-          return;
-        }
-
-        docsArray.forEach((data) => {
+      docsArray.forEach((data) => {
         const cat = data.categorie || "Autre";
         const catClass = cat.replace(/\s+/g, "");
         const isAccepted = data.accepted === true;
         const li = document.createElement("li");
 
         const leftPart = `
-            <span class="badge badge-${catClass}">${cat}</span>
-            <span class="titreChallenge">${data.titre}</span>
-            ${isAccepted
+          <span class="badge badge-${catClass}">${cat}</span>
+          <span class="titreChallenge">${data.titre}</span>
+          ${isAccepted
             ? `<span class="badge badge-accepte">✅ Accepté</span>`
             : `<button class="acceptBtn" data-id="${data.id}">✅ Accepter</button>
-                <button class="refuseBtn" data-id="${data.id}">❌ Refuser</button>`
-            }
+               <button class="refuseBtn" data-id="${data.id}">❌ Refuser</button>`
+          }
         `;
 
         const rightPart = `
-            <button class="validerBtn" data-id="${data.id}">Valider</button>
-            <button class="deleteBtn" data-id="${data.id}">🗑️</button>
+          <button class="validerBtn" data-id="${data.id}">Valider</button>
+          <button class="deleteBtn" data-id="${data.id}">🗑️</button>
         `;
 
         li.innerHTML = leftPart + rightPart;
         list.appendChild(li);
-        });
+      });
+    }
 
-        document.querySelectorAll(".validerBtn").forEach((btn) => {
-          btn.addEventListener("click", async (e) => {
-            const id = e.target.dataset.id;
-            try {
-              await updateDoc(doc(db, "challenges", id), {
-                completed: true,
-                refused: false,
-                dateCompletion: serverTimestamp()
-              });
-            } catch (err) {
-              alert("Erreur : " + err.message);
-            }
-          });
-        });
+    function loadChallenges() {
+      if (unsubscribe) unsubscribe();
 
-        document.querySelectorAll(".deleteBtn").forEach((btn) => {
-        btn.addEventListener("click", async (e) => {
-            const id = e.target.dataset.id;
-            const confirmed = confirm("Supprimer définitivement ce challenge ?");
-            if (!confirmed) return;
-            try {
-            await deleteDoc(doc(db, "challenges", id));
-            } catch (err) {
-            alert("Erreur : " + err.message);
-            }
-        });
-        });
+      const q = query(challengesRef, where("completed", "==", false));
 
-        document.querySelectorAll(".acceptBtn").forEach((btn) => {
-          btn.addEventListener("click", async (e) => {
-            const id = e.target.dataset.id;
-            try {
-              await updateDoc(doc(db, "challenges", id), {
-                accepted: true
-              });
-            } catch (err) {
-              alert("Erreur : " + err.message);
-            }
-          });
-        });
+      unsubscribe = onSnapshot(q, (snapshot) => {
+        let docsArray = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
 
-        document.querySelectorAll(".refuseBtn").forEach((btn) => {
-          btn.addEventListener("click", async (e) => {
-            const id = e.target.dataset.id;
-            const confirmed = confirm("Marquer ce challenge comme refusé ?");
-            if (!confirmed) return;
-            try {
-              await updateDoc(doc(db, "challenges", id), {
-                completed: true,
-                refused: true,
-                dateCompletion: serverTimestamp()
-              });
-            } catch (err) {
-              alert("Erreur : " + err.message);
-            }
-          });
-        });
+        if (currentFilter !== "Toutes") {
+          docsArray = docsArray.filter(d => d.categorie === currentFilter);
+        }
+
+        renderChallenges(docsArray);
       });
     }
 
@@ -169,6 +114,57 @@
     filterSelect.addEventListener("change", (e) => {
       currentFilter = e.target.value;
       loadChallenges();
+    });
+
+    // Délégation d'événements : un seul listener sur la liste, jamais dupliqué
+    list.addEventListener("click", async (e) => {
+      const target = e.target;
+      const id = target.dataset.id;
+      if (!id) return;
+
+      if (target.matches(".validerBtn")) {
+        try {
+          await updateDoc(doc(db, "challenges", id), {
+            completed: true,
+            refused: false,
+            dateCompletion: serverTimestamp()
+          });
+        } catch (err) {
+          alert("Erreur : " + err.message);
+        }
+      }
+
+      if (target.matches(".deleteBtn")) {
+        const confirmed = confirm("Supprimer définitivement ce challenge ?");
+        if (!confirmed) return;
+        try {
+          await deleteDoc(doc(db, "challenges", id));
+        } catch (err) {
+          alert("Erreur : " + err.message);
+        }
+      }
+
+      if (target.matches(".acceptBtn")) {
+        try {
+          await updateDoc(doc(db, "challenges", id), { accepted: true });
+        } catch (err) {
+          alert("Erreur : " + err.message);
+        }
+      }
+
+      if (target.matches(".refuseBtn")) {
+        const confirmed = confirm("Marquer ce challenge comme refusé ?");
+        if (!confirmed) return;
+        try {
+          await updateDoc(doc(db, "challenges", id), {
+            completed: true,
+            refused: true,
+            dateCompletion: serverTimestamp()
+          });
+        } catch (err) {
+          alert("Erreur : " + err.message);
+        }
+      }
     });
 
     document.getElementById("addForm").addEventListener("submit", async (e) => {

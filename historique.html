@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Historique et Stats</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -29,9 +29,9 @@
 
     const challengesRef = collection(db, "challenges");
     const qCompleted = query(challengesRef, where("completed", "==", true));
+    const list = document.getElementById("historyList");
 
     onSnapshot(qCompleted, (snapshot) => {
-      const list = document.getElementById("historyList");
       list.innerHTML = "";
 
       if (snapshot.empty) {
@@ -80,21 +80,21 @@
 
       document.getElementById("totalCompleted").textContent = snapshot.size - refusedCount;
       document.getElementById("totalRefused").textContent = refusedCount;
+    });
 
-      document.querySelectorAll(".undoBtn").forEach((btn) => {
-        btn.addEventListener("click", async (e) => {
-          const id = e.target.dataset.id;
-          try {
-            await updateDoc(doc(db, "challenges", id), {
-              completed: false,
-              refused: false,
-              dateCompletion: null
-            });
-          } catch (err) {
-            alert("Erreur : " + err.message);
-          }
+    // Délégation d'événements : un seul listener posé une fois, jamais dupliqué
+    list.addEventListener("click", async (e) => {
+      if (!e.target.matches(".undoBtn")) return;
+      const id = e.target.dataset.id;
+      try {
+        await updateDoc(doc(db, "challenges", id), {
+          completed: false,
+          refused: false,
+          dateCompletion: null
         });
-      });
+      } catch (err) {
+        alert("Erreur : " + err.message);
+      }
     });
 
     getDocs(challengesRef).then((snapshot) => {
