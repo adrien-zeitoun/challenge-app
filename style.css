@@ -321,11 +321,69 @@ a:hover {
 }
 
 @media (max-width: 500px) {
+  body {
+    padding: 16px 12px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
   #addForm {
     flex-direction: column;
+    align-items: stretch;
   }
+
+  #addForm select, #titreInput, #addForm button {
+    width: 100%;
+  }
+
+  .filterBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #filterSelect {
+    width: 100%;
+  }
+
+  #challengeList li, #historyList li {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: left;
+  }
+
+  .titreChallenge {
+    font-size: 0.95rem;
+    order: -1;
+  }
+
+  .validerBtn, .undoBtn {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .acceptBtn, .refuseBtn, .deleteBtn {
+    width: 100%;
+  }
+
   .stats {
     flex-direction: column;
+  }
+
+  .stats p {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .stats span {
+    font-size: 1.3rem;
+  }
+
+  .dangerBtn {
+    width: 100%;
+    margin: 0 0 20px 0;
   }
 }
 
