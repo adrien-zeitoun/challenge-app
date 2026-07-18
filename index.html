@@ -98,28 +98,32 @@
         ul.className = "challengeList";
         ul.style.display = isCollapsed ? "none" : "flex";
 
-        groups[cat].forEach((data) => {
-          const isAccepted = data.accepted === true;
-          const li = document.createElement("li");
+groups[cat].forEach((data) => {
+  const isAccepted = data.accepted === true;
+  const li = document.createElement("li");
 
-          const leftPart = `
-            <span class="badge badge-${catClass}">${cat}</span>
-            <span class="titreChallenge">${data.titre}</span>
-            ${isAccepted
-              ? `<span class="badge badge-accepte">✅</span>`
-              : `<button class="acceptBtn" data-id="${data.id}">✅</button>
-                 <button class="refuseBtn" data-id="${data.id}">❌</button>`
-            }
-          `;
+  const topRow = `
+    <div class="cardTop">
+      <span class="badge badge-${catClass}">${cat}</span>
+      <span class="titreChallenge">${data.titre}</span>
+    </div>
+  `;
 
-          const rightPart = `
-            <button class="validerBtn" data-id="${data.id}">Valider</button>
-            <button class="deleteBtn" data-id="${data.id}">🗑️</button>
-          `;
+  const bottomRow = `
+    <div class="cardActions">
+      ${isAccepted
+        ? `<span class="badge badge-accepte">✅</span>`
+        : `<button class="acceptBtn" data-id="${data.id}">✅</button>
+           <button class="refuseBtn" data-id="${data.id}">❌</button>`
+      }
+      <button class="validerBtn" data-id="${data.id}">Valider</button>
+      <button class="deleteBtn" data-id="${data.id}">🗑️</button>
+    </div>
+  `;
 
-          li.innerHTML = leftPart + rightPart;
-          ul.appendChild(li);
-        });
+  li.innerHTML = topRow + bottomRow;
+  ul.appendChild(li);
+});
 
         container.appendChild(ul);
       });
