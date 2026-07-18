@@ -41,7 +41,7 @@
     </select>
   </div>
 
-  <ul id="challengeList"></ul>
+  <div id="challengeContainer"></div>
 
   <a href="historique.html">Voir l'historique et les stats</a>
 
@@ -53,43 +53,75 @@
     } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
     const challengesRef = collection(db, "challenges");
-    const list = document.getElementById("challengeList");
+    const container = document.getElementById("challengeContainer");
     const filterSelect = document.getElementById("filterSelect");
 
     let currentFilter = "Toutes";
     let unsubscribe = null;
 
+    // Mémorise l'état plié/déplié de chaque groupe entre les rafraîchissements
+    const collapsedGroups = new Set();
+
     function renderChallenges(docsArray) {
-      list.innerHTML = "";
+      container.innerHTML = "";
 
       if (docsArray.length === 0) {
-        list.innerHTML = "<p>Aucun challenge dans cette catégorie.</p>";
+        container.innerHTML = "<p>Aucun challenge dans cette catégorie.</p>";
         return;
       }
 
+      // Regroupement par catégorie
+      const groups = {};
       docsArray.forEach((data) => {
         const cat = data.categorie || "Autre";
+        if (!groups[cat]) groups[cat] = [];
+        groups[cat].push(data);
+      });
+
+      const sortedCategories = Object.keys(groups).sort();
+
+      sortedCategories.forEach((cat) => {
         const catClass = cat.replace(/\s+/g, "");
-        const isAccepted = data.accepted === true;
-        const li = document.createElement("li");
+        const isCollapsed = collapsedGroups.has(cat);
 
-        const leftPart = `
-          <span class="badge badge-${catClass}">${cat}</span>
-          <span class="titreChallenge">${data.titre}</span>
-          ${isAccepted
-            ? `<span class="badge badge-accepte">✅ Accepté</span>`
-            : `<button class="acceptBtn" data-id="${data.id}">✅ Accepter</button>
-               <button class="refuseBtn" data-id="${data.id}">❌ Refuser</button>`
-          }
+        const divider = document.createElement("div");
+        divider.className = "groupDivider";
+        divider.dataset.cat = cat;
+        divider.innerHTML = `
+          <span class="groupTitle">${cat}</span>
+          <span class="groupCount">${groups[cat].length}</span>
+          <span class="groupArrow">${isCollapsed ? "▸" : "▾"}</span>
         `;
+        container.appendChild(divider);
 
-        const rightPart = `
-          <button class="validerBtn" data-id="${data.id}">Valider</button>
-          <button class="deleteBtn" data-id="${data.id}">🗑️</button>
-        `;
+        const ul = document.createElement("ul");
+        ul.className = "challengeList";
+        ul.style.display = isCollapsed ? "none" : "flex";
 
-        li.innerHTML = leftPart + rightPart;
-        list.appendChild(li);
+        groups[cat].forEach((data) => {
+          const isAccepted = data.accepted === true;
+          const li = document.createElement("li");
+
+          const leftPart = `
+            <span class="badge badge-${catClass}">${cat}</span>
+            <span class="titreChallenge">${data.titre}</span>
+            ${isAccepted
+              ? `<span class="badge badge-accepte">✅</span>`
+              : `<button class="acceptBtn" data-id="${data.id}">✅</button>
+                 <button class="refuseBtn" data-id="${data.id}">❌</button>`
+            }
+          `;
+
+          const rightPart = `
+            <button class="validerBtn" data-id="${data.id}">Valider</button>
+            <button class="deleteBtn" data-id="${data.id}">🗑️</button>
+          `;
+
+          li.innerHTML = leftPart + rightPart;
+          ul.appendChild(li);
+        });
+
+        container.appendChild(ul);
       });
     }
 
@@ -116,8 +148,23 @@
       loadChallenges();
     });
 
-    // Délégation d'événements : un seul listener sur la liste, jamais dupliqué
-    list.addEventListener("click", async (e) => {
+    // Clic sur un divider = plier/déplier le groupe
+    container.addEventListener("click", (e) => {
+      const divider = e.target.closest(".groupDivider");
+      if (!divider) return;
+      const cat = divider.dataset.cat;
+      if (collapsedGroups.has(cat)) {
+        collapsedGroups.delete(cat);
+      } else {
+        collapsedGroups.add(cat);
+      }
+      const ul = divider.nextElementSibling;
+      ul.style.display = collapsedGroups.has(cat) ? "none" : "flex";
+      divider.querySelector(".groupArrow").textContent = collapsedGroups.has(cat) ? "▸" : "▾";
+    });
+
+    // Délégation d'événements pour les boutons d'action
+    container.addEventListener("click", async (e) => {
       const target = e.target;
       const id = target.dataset.id;
       if (!id) return;

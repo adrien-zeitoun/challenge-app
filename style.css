@@ -120,32 +120,37 @@ h1 {
   width: 100%;
 }
 
-/* --- Liste des challenges (glass cards) --- */
-#challengeList, #historyList {
+/* --- Listes : cartes empilées verticalement --- */
+#challengeList, #historyList, .challengeList {
   list-style: none;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-#challengeList li, #historyList li {
+/* --- Chaque carte : contenu en ligne horizontale --- */
+#challengeList li, #historyList li, .challengeList li {
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 16px 18px;
-  margin-bottom: 12px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
   border-radius: 14px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.25);
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  font-size: 1rem;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 10px;
+  font-size: 0.95rem;
   width: 100%;
   color: #f1f1f1;
   transition: transform 0.2s, box-shadow 0.2s;
+  overflow-x: auto;
 }
 
-#challengeList li:hover {
+#challengeList li:hover, .challengeList li:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 28px rgba(120, 115, 245, 0.25);
 }
@@ -157,12 +162,17 @@ h1 {
 #historyList li strong {
   text-decoration: line-through;
   color: rgba(255,255,255,0.75);
+  flex-shrink: 0;
 }
 
 .titreChallenge {
   color: #f1f1f1;
-  font-size: 1rem;
-  word-break: break-word;
+  font-size: 0.95rem;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 input[type="checkbox"] {
@@ -170,6 +180,7 @@ input[type="checkbox"] {
   height: 22px;
   cursor: pointer;
   accent-color: #4ade80;
+  flex-shrink: 0;
 }
 
 /* --- Badges catégories (néon) --- */
@@ -181,6 +192,7 @@ input[type="checkbox"] {
   font-weight: 700;
   white-space: nowrap;
   box-shadow: 0 0 10px currentColor;
+  flex-shrink: 0;
 }
 
 .badge-Boxe { background-color: #ef4444; box-shadow: 0 0 10px #ef444488; }
@@ -247,17 +259,19 @@ a:hover {
   -webkit-text-fill-color: transparent;
 }
 
-/* --- Boutons Accepter / Refuser / Valider / Annuler / Reset / Supprimer --- */
-.acceptBtn, .refuseBtn, .validerBtn, .undoBtn, .deleteBtn, .dangerBtn {
-  width: 100%;
-  padding: 10px 14px;
+/* --- Boutons Accepter / Refuser / Valider / Annuler / Supprimer --- */
+.acceptBtn, .refuseBtn, .validerBtn, .undoBtn, .deleteBtn {
+  width: auto;
+  padding: 6px 10px;
   border: none;
   border-radius: 8px;
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.2s;
   text-align: center;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .acceptBtn {
@@ -284,6 +298,7 @@ a:hover {
   background: linear-gradient(90deg, #4ade80, #16a34a);
   color: white;
   box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);
+  margin-left: auto;
 }
 
 .validerBtn:hover {
@@ -294,6 +309,7 @@ a:hover {
 .undoBtn {
   background: linear-gradient(90deg, #f59e0b, #f97316);
   color: white;
+  margin-left: auto;
 }
 
 .undoBtn:hover {
@@ -313,7 +329,17 @@ a:hover {
   transform: translateY(-1px);
 }
 
+/* --- Bouton Reset (pleine largeur) --- */
 .dangerBtn {
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s;
+  text-align: center;
   background: linear-gradient(90deg, #ef4444, #dc2626);
   color: white;
   box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
@@ -325,7 +351,7 @@ a:hover {
   box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
 }
 
-/* --- Desktop / tablette : à partir de 600px, on repasse en ligne --- */
+/* --- Desktop / tablette --- */
 @media (min-width: 600px) {
   body {
     padding: 30px 20px;
@@ -359,12 +385,6 @@ a:hover {
     width: auto;
   }
 
-  #challengeList li, #historyList li {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-
   a {
     display: inline-block;
     text-align: left;
@@ -384,17 +404,56 @@ a:hover {
     display: block;
   }
 
-  .acceptBtn, .refuseBtn, .validerBtn, .undoBtn, .deleteBtn {
-    width: auto;
-  }
-
-  .validerBtn, .undoBtn {
-    margin-left: auto;
-  }
-
   .dangerBtn {
     width: auto;
     display: block;
     margin: 0 0 20px auto;
   }
+}
+
+/* --- Groupes par lieu --- */
+.groupDivider {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: linear-gradient(90deg, rgba(120,115,245,0.25), rgba(255,110,196,0.15));
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin: 20px 0 10px 0;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.groupDivider:hover {
+  background: linear-gradient(90deg, rgba(120,115,245,0.35), rgba(255,110,196,0.25));
+}
+
+.groupDivider:first-child {
+  margin-top: 0;
+}
+
+.groupTitle {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.groupCount {
+  background: rgba(255,255,255,0.15);
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  margin-left: auto;
+}
+
+.groupArrow {
+  font-size: 1.2rem;
+  color: #fff;
 }
